@@ -3,6 +3,7 @@ name: CrashPlugin
 author: William AVENTIN
 version: ${project.version}
 website: "https://ww.elesia.org"
+api-version: "1.13"
 depend:
   - Vault
 commands:

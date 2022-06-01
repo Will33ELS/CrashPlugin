@@ -18,6 +18,7 @@ public class CrashTask extends BukkitRunnable {
         if(this.crashGUI.getSeconds() > 0){
             this.crashGUI.decrementSeconds();
         }else {
+            this.cancel();
             this.crashGUI.onFinish(this.player);
         }
         this.crashGUI.onUpdate(this.player);

@@ -4,6 +4,7 @@ import fr.will33.crashplugin.CrashPlugin;
 import fr.will33.crashplugin.api.AbstractGUI;
 import fr.will33.crashplugin.task.CrashTask;
 import fr.will33.crashplugin.tchat.SelectBetTchatRequest;
+import fr.will33.crashplugin.util.CrashAlgorithm;
 import fr.will33.crashplugin.util.ItemUtil;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -36,14 +37,14 @@ public class CrashGUI extends AbstractGUI {
                 new ItemUtil(
                         Material.valueOf(fileConfiguration.getString("crashGUI.confirmBet.material")),
                         1,
-                        ChatColor.translateAlternateColorCodes('&', fileConfiguration.getString("crashGUI.confirmBet.displayName")),
+                        ChatColor.translateAlternateColorCodes('&', fileConfiguration.getString("crashGUI.confirmBet.displayName").replace("%amount%", String.valueOf(this.bet))),
                         this.transformColor(fileConfiguration.getStringList("crashGUI.confirmBet.lore"))).toItemStack(), 0, "confirm");
 
         this.setSlotData(
                 new ItemUtil(
                         Material.valueOf(fileConfiguration.getString("crashGUI.gameStatus.material")),
                         1,
-                        ChatColor.translateAlternateColorCodes('&', fileConfiguration.getString("crashGUI.gameStatus.displayName")),
+                        ChatColor.translateAlternateColorCodes('&', fileConfiguration.getString("crashGUI.gameStatus.displayName").replace("%seconds%", String.valueOf(this.seconds))),
                         this.transformColor(fileConfiguration.getStringList("crashGUI.gameStatus.lore"))
                 ).toItemStack(), 4, null
         );
@@ -107,6 +108,7 @@ public class CrashGUI extends AbstractGUI {
                     }else if(!this.confirm(player)){
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', fileConfiguration.getString("notMoney")));
                     }else{
+                        this.seconds = 10;
                         this.crashTask = new CrashTask(player, this);
                         this.crashTask.runTaskTimer(CrashPlugin.getInstance(), 20, 20);
                     }
@@ -154,6 +156,7 @@ public class CrashGUI extends AbstractGUI {
                 CrashPlugin.getInstance().getTchatRequests().put(player.getUniqueId(), new SelectBetTchatRequest(this));
             }
         }
+        this.onUpdate(player);
     }
 
     /**
@@ -173,11 +176,12 @@ public class CrashGUI extends AbstractGUI {
      */
     private List<String> transformColor(List<String> lore){
         return lore.stream()
-                .map(l -> ChatColor.translateAlternateColorCodes('&', l)
+                .map(l -> ChatColor.translateAlternateColorCodes('&', l
                         .replace("%amount%", String.valueOf(this.bet))
                         .replace("%seconds%", String.valueOf(this.seconds))
                         .replace("%multiplier%", String.valueOf(this.multiplier))
                         .replace("%winnings%", String.valueOf(this.bet * this.multiplier))
+                        )
                 ).toList();
     }
 
@@ -210,6 +214,7 @@ public class CrashGUI extends AbstractGUI {
      * Finish crash
      */
     public void onFinish(OfflinePlayer offlinePlayer){
+        this.multiplier = CrashAlgorithm.random();
         int finalAmount = (int) (this.bet * this.multiplier);
         CrashPlugin.getInstance().getEconomy().depositPlayer(offlinePlayer, finalAmount);
         if(offlinePlayer.getPlayer() != null)
