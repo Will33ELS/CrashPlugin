@@ -1,0 +1,53 @@
+crashGUI:
+  title: "&bCrash !"
+  confirmBet:
+    material: ORANGE_DYE
+    displayName: "&aCurrent bet: &7%amount%"
+    lore:
+      - "&f* &7Click to confirm your bet."
+  gameStatus:
+    material: FIREWORK_ROCKET
+    displayName: "&bGame Status: &7%seconds% Seconds"
+    lore:
+      - ""
+      - "&f&n%multiplier%x"
+      - ""
+      - "&aCurrent Winnings: &7$%winnings%"
+  selectBet:
+    material: NAME_TAG
+    displayName: "&eSelect bet"
+    lore:
+      - "&f* &7Define your bet"
+  firstAddBet:
+    material: GRAY_DYE
+    amount: 200000
+    displayName: "&aHigher bet"
+    lore:
+      - "&f* &7Higher your bet by $200,000"
+  secondsAddBet:
+    material: PINK_DYE
+    amount: 100000
+    displayName: "&aHigher bet"
+    lore:
+      - "&f* &7Higher your bet by $100,000"
+  firstRemoveBet:
+    material: BLACK_DYE
+    amount: 200000
+    displayName: "&cLower bet"
+    lore:
+      - "&f* &7Lower your bet by $200,000"
+  secondsRemoveBet:
+    material: RED_DYE
+    amount: 100000
+    displayName: "&cLower bet"
+    lore:
+      - "&f* &7Lower your bet by $100,000"
+notMoney: "&cYou dont got enoght balance for this."
+noBetSelected: "&cYou must select the amount to play"
+maxBetSelected: 10000000
+betMore: "&cYou can't bet more than &e$%maxBet%"
+selectBet: "&7You must select an amount between &e$ 1 &7and &e$ %maxBet%"
+noPermission: "&cYou don't have permission."
+betIsNotANumber: "&cThe bet must be a whole number!"
+alreadyConfirmed: "&cYour bet is already confirmed!"
+add: "&a$%amount% has been added to yout account."

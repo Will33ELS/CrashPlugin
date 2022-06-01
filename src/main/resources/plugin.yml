@@ -1,0 +1,10 @@
+main: fr.will33.crashplugin.CrashPlugin
+name: CrashPlugin
+author: William AVENTIN
+version: ${project.version}
+website: "https://ww.elesia.org"
+depend:
+  - Vault
+commands:
+  crash:
+    description: Open crash GUI
