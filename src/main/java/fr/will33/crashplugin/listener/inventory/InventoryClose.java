@@ -16,6 +16,7 @@ public class InventoryClose extends CrashListener {
         AbstractGUI abstractGUI = this.getPluginInstance().getOpenGUI().get(player.getUniqueId());
         if(abstractGUI != null)
             if(inventory != null && abstractGUI.getInventory().equals(inventory)){
+                abstractGUI.onClose(player);
                 this.getPluginInstance().getOpenGUI().remove(player.getUniqueId());
             }
     }

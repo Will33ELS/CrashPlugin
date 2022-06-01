@@ -27,6 +27,12 @@ public abstract class AbstractGUI {
     public abstract void onClick(Player player, ItemStack currentItem, ClickType clickType, String action);
 
     /**
+     * Function called when the player close this inventory
+     * @param player Instance of the player
+     */
+    public void onClose(Player player){}
+
+    /**
      * Get {@link Inventory} instance
      * @return
      */

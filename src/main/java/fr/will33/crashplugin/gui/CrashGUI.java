@@ -20,8 +20,9 @@ import java.util.List;
 
 public class CrashGUI extends AbstractGUI {
 
-    private int bet = 0, seconds = 10;
+    private int bet = 0, seconds = 10, multiplierIndex = 0;
     private double multiplier = 1.0D;
+    private double showMultiplier = 0.0D;
     private CrashTask crashTask = null;
 
     @Override
@@ -46,7 +47,7 @@ public class CrashGUI extends AbstractGUI {
                         1,
                         ChatColor.translateAlternateColorCodes('&', fileConfiguration.getString("crashGUI.gameStatus.displayName").replace("%seconds%", String.valueOf(this.seconds))),
                         this.transformColor(fileConfiguration.getStringList("crashGUI.gameStatus.lore"))
-                ).toItemStack(), 4, null
+                ).toItemStack(), 4, "select"
         );
 
         this.setSlotData(
@@ -109,9 +110,15 @@ public class CrashGUI extends AbstractGUI {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', fileConfiguration.getString("notMoney")));
                     }else{
                         this.seconds = 10;
+                        this.selectMultiplier();
                         this.crashTask = new CrashTask(player, this);
-                        this.crashTask.runTaskTimer(CrashPlugin.getInstance(), 20, 20);
+                        this.crashTask.runTaskTimer(CrashPlugin.getInstance(), 10, 10);
                     }
+                }
+            }
+            case "select" -> {
+                if(this.crashTask != null){
+                    this.stop(player);
                 }
             }
             case "firstAdd" -> {
@@ -159,6 +166,14 @@ public class CrashGUI extends AbstractGUI {
         this.onUpdate(player);
     }
 
+    @Override
+    public void onClose(Player player) {
+        if(this.crashTask != null){
+            this.crashTask.cancel();
+            this.crashTask = null;
+        }
+    }
+
     /**
      * Take money
      * @param player Instance of the player
@@ -179,7 +194,7 @@ public class CrashGUI extends AbstractGUI {
                 .map(l -> ChatColor.translateAlternateColorCodes('&', l
                         .replace("%amount%", String.valueOf(this.bet))
                         .replace("%seconds%", String.valueOf(this.seconds))
-                        .replace("%multiplier%", String.valueOf(this.multiplier))
+                        .replace("%multiplier%", String.valueOf(this.showMultiplier))
                         .replace("%winnings%", String.valueOf(this.bet * this.multiplier))
                         )
                 ).toList();
@@ -214,12 +229,42 @@ public class CrashGUI extends AbstractGUI {
      * Finish crash
      */
     public void onFinish(OfflinePlayer offlinePlayer){
-        this.multiplier = CrashAlgorithm.random();
+        this.crashTask.cancel();
         int finalAmount = (int) (this.bet * this.multiplier);
         CrashPlugin.getInstance().getEconomy().depositPlayer(offlinePlayer, finalAmount);
         if(offlinePlayer.getPlayer() != null)
             offlinePlayer.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', CrashPlugin.getInstance().getConfig().getString("add").replace("%amount%", String.valueOf(finalAmount))));
         this.bet = 0;
         this.crashTask = null;
+    }
+
+    /**
+     * Select max multiplier
+     */
+    public void selectMultiplier(){
+        this.multiplier = CrashAlgorithm.random();
+    }
+
+    /**
+     * Refresh multiplier
+     * @param player Instance of the player
+     */
+    public void refreshMultiplier(Player player){
+        this.multiplierIndex ++;
+        double v = CrashAlgorithm.value.get(this.multiplierIndex);
+        if(v == this.multiplier){
+            this.onFinish(player);
+        }else{
+            this.showMultiplier = v;
+        }
+    }
+
+    /**
+     * Stop multiplier
+     * @param player Instance of the player
+     */
+    public void stop(Player player){
+        this.multiplier = this.showMultiplier;
+        this.onFinish(player);
     }
 }
